@@ -94,7 +94,7 @@ class RevolutCsvReader:
 
         
 
-        _0, completed_date_str, _2, _3, description, _5, _6, _7, \
+        _0, completed_date_str, _2, _3, description, reference, payer, _7, \
         _8, _9, _10, amount_str, fee_str, balance_str, _14, _15, _16, iban, _18 \
             = row
 
@@ -103,6 +103,8 @@ class RevolutCsvReader:
             float(amount_str), float(fee_str), float(balance_str)
 
         name = "" # Field not present in CSV. Re-add later once Revolut re-adds it in their next CSV format change.
+        if len(payer) > 0:
+            description = description + " (paid by: " + payer + ")"
 
         transaction_without_fee = Transaction(
             amount=amount,
@@ -111,7 +113,8 @@ class RevolutCsvReader:
             description=description,
             datetime=completed_datetime,
             before_balance=balance - amount - fee,
-            after_balance=balance - fee)
+            after_balance=balance - fee,
+            reference=reference)
 
         batch = [transaction_without_fee]
 
@@ -136,5 +139,6 @@ class RevolutCsvReader:
             description=FEE_DESCRIPTION_FORMAT.format(int(completed_datetime.timestamp())),
             datetime=completed_datetime + FEE_DATETIME_DELTA,
             before_balance=balance - fee,
-            after_balance=balance)
+            after_balance=balance,
+            reference='FEE')
 

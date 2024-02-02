@@ -18,7 +18,7 @@ class EolCsvWriter:
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.transactions:
             # Open file here to write everything at once
-            with open(self.output_file, mode='w', newline='') as file:
+            with open(self.output_file, mode='w', newline='', encoding='iso-8859-1') as file:
                 writer = csv.writer(file) 
                 starting_balance = self.transactions[0].before_balance
                 closing_balance = self.transactions[-1].after_balance

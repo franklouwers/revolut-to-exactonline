@@ -8,20 +8,20 @@ from datetime import datetime, timedelta
 from data import Transaction
 
 EXCPECT_HEADERS = [
-    'Date started (UTC)', 
+    'Date started (UTC)',
     'Date completed (UTC)',
-    'ID', 
+    'ID',
     'Type',
-    'Description', 
+    'Description',
     'Reference',
-    'Payer', 
-    'Card number', 
-    'Orig currency', 
+    'Payer',
+    'Card number',
+    'Orig currency',
     'Orig amount',
     'Payment currency',
-    'Amount', 
-    'Fee', 
-    'Balance', 
+    'Amount',
+    'Fee',
+    'Balance',
     'Account',
     'Beneficiary account number',
     'Beneficiary sort code or routing number',
@@ -57,11 +57,9 @@ class RevolutCsvReader:
 
         self._validate()
 
-
     def __del__(self):
         if not self.file.closed:
             self.file.close()
-
 
     def _validate(self):
         def _santize_header(header):
@@ -72,8 +70,8 @@ class RevolutCsvReader:
 
         headers = [_santize_header(h) for h in next(self.reader)]
         if headers != EXCPECT_HEADERS:
-            raise ValueError('Headers do not match expected Revolut CSV format.')
-
+            raise ValueError(
+                'Headers do not match expected Revolut CSV format.')
 
     def get_all_transactions(self):
         transactions = []
@@ -81,7 +79,6 @@ class RevolutCsvReader:
             transactions = self._parse_transaction(row) + transactions
 
         return transactions
-
 
     def _parse_transaction(self, row):
 
@@ -92,17 +89,19 @@ class RevolutCsvReader:
 
             return name_
 
-        
+        if len(row) == 0:  # monthly statements seem to have an empty line at the end
+            return []
 
         _0, completed_date_str, _2, _3, description, reference, payer, _7, \
-        _8, _9, _10, amount_str, fee_str, balance_str, _14, _15, _16, iban, _18 \
+            _8, _9, _10, amount_str, fee_str, balance_str, _14, _15, _16, iban, _18 \
             = row
 
         completed_datetime = datetime.strptime(completed_date_str, DATE_FORMAT)
         amount, fee, balance = \
             float(amount_str), float(fee_str), float(balance_str)
 
-        name = "" # Field not present in CSV. Re-add later once Revolut re-adds it in their next CSV format change.
+        # Field not present in CSV. Re-add later once Revolut re-adds it in their next CSV format change.
+        name = ""
         if len(payer) > 0:
             description = description + " (paid by: " + payer + ")"
 
@@ -128,7 +127,6 @@ class RevolutCsvReader:
 
         return batch
 
-
     def _make_fee_transaction(self, completed_datetime, balance, fee):
         return Transaction(
             amount=fee,
@@ -136,9 +134,9 @@ class RevolutCsvReader:
             iban=FEE_IBAN,
             # include timestamp of transaction to make sure that SnelStart
             # does not detect similar transactions as the same one
-            description=FEE_DESCRIPTION_FORMAT.format(int(completed_datetime.timestamp())),
+            description=FEE_DESCRIPTION_FORMAT.format(
+                int(completed_datetime.timestamp())),
             datetime=completed_datetime + FEE_DATETIME_DELTA,
             before_balance=balance - fee,
             after_balance=balance,
             reference='FEE')
-

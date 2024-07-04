@@ -1,6 +1,7 @@
 from data import Transaction
 import csv
 
+
 class EolCsvWriter:
 
     def __init__(self, output_file, journal, gl_generic, gl_transfer, gl_fincost):
@@ -8,6 +9,7 @@ class EolCsvWriter:
         self.journal = journal
         self.gl_generic = gl_generic
         self.gl_transfer = gl_transfer
+        self.gl_fincost = gl_fincost
         self.file = None
         self.writer = None
         self.transactions = []
@@ -19,11 +21,13 @@ class EolCsvWriter:
         if self.transactions:
             # Open file here to write everything at once
             with open(self.output_file, mode='w', newline='', encoding='iso-8859-1') as file:
-                writer = csv.writer(file) 
+                writer = csv.writer(file)
                 starting_balance = self.transactions[0].before_balance
                 closing_balance = self.transactions[-1].after_balance
                 journal = self.journal
-                writer.writerow(['H', journal, starting_balance, closing_balance]) # EOL is happiest when the header has a fixed ID in the first row
+                # EOL is happiest when the header has a fixed ID in the first row
+                writer.writerow(
+                    ['H', journal, starting_balance, closing_balance])
 
                 for transaction in self.transactions:
                     if transaction.reference == "TRANSFER":
@@ -42,8 +46,7 @@ class EolCsvWriter:
                     ]
                     writer.writerow(eol_transaction)
 
-
-    def write_transaction(self, transaction : Transaction):
+    def write_transaction(self, transaction: Transaction):
         self.transactions.append(transaction)
 
 
@@ -51,4 +54,3 @@ class EolCsv:
     @staticmethod
     def date(val):
         return val.strftime('%d/%m/%y')
-

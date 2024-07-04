@@ -20,6 +20,7 @@ EXCPECT_HEADERS = [
     'Orig amount',
     'Payment currency',
     'Amount',
+    'Exchange rate',
     'Fee',
     'Balance',
     'Account',
@@ -92,8 +93,26 @@ class RevolutCsvReader:
         if len(row) == 0:  # monthly statements seem to have an empty line at the end
             return []
 
-        _0, completed_date_str, _2, _3, description, reference, payer, _7, \
-            _8, _9, _10, amount_str, fee_str, balance_str, _14, _15, _16, iban, _18 \
+        start_date_str, \
+            completed_date_str, \
+            transaction_id, \
+            transaction_type, \
+            description, \
+            reference, \
+            payer, \
+            card_number, \
+            orig_currency, \
+            orig_amount, \
+            payment_currency, \
+            amount_str, \
+            exchange_rate_str, \
+            fee_str, \
+            balance_str, \
+            account_str, \
+            benificiary_account_str, \
+            benificiary_sort_str, \
+            iban, \
+            bic \
             = row
 
         completed_datetime = datetime.strptime(completed_date_str, DATE_FORMAT)

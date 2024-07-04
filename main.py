@@ -21,25 +21,25 @@ def main():
                         dest='output_file',
                         help='path to EOL CSV output file',
                         required=True)
-    
+
     parser.add_argument('--transfer',
                         dest='gl_transfer',
                         help='GLaccount for Transfers (default: 580000)',
                         required=False,
                         default='580000')
-    
+
     parser.add_argument('--journal',
                         dest='journal',
                         help='Exact Journal ID (default: 502)',
                         required=False,
                         default='502')
-    
+
     parser.add_argument('--default',
                         dest='gl_default',
                         help='GLaccount for unknown transactions (default: 580900)',
                         required=False,
                         default='580900')
-    
+
     parser.add_argument('--fincost',
                         dest='gl_fincost',
                         help='GLaccount for banking financial costs (default: 658000)',
@@ -56,7 +56,8 @@ def main():
             pprint.pprint(transaction)
             writer.write_transaction(transaction)
 
-        print('Wrote {} transactions to file: {}.'.format(len(transactions), args.output_file))
+        print('Wrote {} transactions to file: {}'.format(
+            len(transactions), args.output_file))
 
 
 if __name__ == "__main__":

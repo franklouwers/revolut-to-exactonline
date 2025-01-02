@@ -52,6 +52,7 @@ def main():
 
     with EolCsvWriter(args.output_file, args.journal, args.gl_default, args.gl_transfer, args.gl_fincost) as writer:
         transactions = reader.get_all_transactions()
+        transactions.sort(key=lambda x: x.datetime)
         for transaction in transactions:
             pprint.pprint(transaction)
             writer.write_transaction(transaction)

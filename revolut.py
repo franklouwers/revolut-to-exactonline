@@ -65,6 +65,7 @@ class RevolutCsvReader:
             'reference': 'reference',
             'beneficiary_iban': 'iban',
             'payer': 'payer',  # Optional field
+            'type': 'type'
         }
 
         # Extract required fields using header indices
@@ -91,6 +92,7 @@ class RevolutCsvReader:
             total_amount = Decimal(transaction_data['total_amount_str'])
             description = transaction_data['description']
             reference = transaction_data['reference']
+            txtype = transaction_data['type']
             iban = transaction_data.get('iban', '')
             payer = transaction_data.get('payer', '')
 
@@ -108,7 +110,8 @@ class RevolutCsvReader:
                 datetime=completed_datetime,
                 before_balance=balance - total_amount,
                 after_balance=balance,
-                reference=reference
+                reference=reference,
+                txtype=txtype
             )
 
             transactions = [transaction]

@@ -34,15 +34,17 @@ class EolCsvWriter:
                         glaccount = self.gl_transfer
                     elif transaction.reference == "FEE":
                         glaccount = self.gl_fincost
+                    elif transaction.txtype == "FEE":
+                        glaccount = self.gl_fincost
                     else:
                         glaccount = self.gl_generic
 
                     eol_transaction = [
                         EolCsv.date(transaction.datetime),
                         glaccount,
-                        transaction.description,
+                        transaction.description[:60],
                         transaction.amount,
-                        transaction.description
+                        transaction.description[:60]
                     ]
                     writer.writerow(eol_transaction)
 

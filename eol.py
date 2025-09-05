@@ -24,6 +24,7 @@ class EolCsvWriter:
                 writer = csv.writer(file)
                 starting_balance = self.transactions[0].before_balance
                 closing_balance = self.transactions[-1].after_balance
+                print(f"Starting: {starting_balance}. closing: {closing_balance}")
                 journal = self.journal
                 # EOL is happiest when the header has a fixed ID in the first row
                 writer.writerow(
